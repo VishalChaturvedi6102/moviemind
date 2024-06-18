@@ -29,7 +29,7 @@ const Header = () => {
           addUser({
             uid: uid,
             email: email,
-            displayName: displayName,
+            displayName: displayName,     
             photoURL: photoURL,
           })
         );
