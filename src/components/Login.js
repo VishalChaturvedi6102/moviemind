@@ -21,6 +21,8 @@ const Login = () => {
         email.current.value,
         password.current.value
       )
+
+
         .then((userCredential) => {
           const user = userCredential.user;
           updateProfile(user, {
@@ -41,6 +43,7 @@ const Login = () => {
             .catch((error) => {
               setErrorMessage(error.message);
             });
+            
         })
         .catch((error) => {
           const errorCode = error.code;
