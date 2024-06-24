@@ -1,94 +1,15 @@
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
-import { auth } from "../utils/firebase";
-import { addUser, removeUser } from "../utils/userSlice";
-import { toggleGptSearchView } from "../utils/gptSlice";
-import { changeLanguage } from "../utils/configSlice";
+import React from 'react'
 
 const Header = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector((store) => store.user);
-  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {})
-      .catch((error) => {
-        navigate("/error");
-      });
-  };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const { uid, email, displayName, photoURL } = user;
-        dispatch(
-          addUser({
-            uid: uid,
-            email: email,
-            displayName: displayName,     
-            photoURL: photoURL,
-          })
-        );
-        navigate("/browse");
-      } else {
-        dispatch(removeUser());
-        navigate("/");
-      }
-    });
-
-    // Unsiubscribe when component unmounts
-    return () => unsubscribe();
-  }, []);
-
-  const handleGptSearchClick = () => {
-    // Toggle GPT Search
-    dispatch(toggleGptSearchView());
-  };
-
-  const handleLanguageChange = (e) => {
-    dispatch(changeLanguage(e.target.value));
-  };
-
   return (
-    <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
-      <img className="w-44 mx-auto md:mx-0" src={LOGO} alt="logo" />
-      {user && (
-        <div className="flex p-2 justify-between">
-          {showGptSearch && (
-            <select
-              className="p-2 m-2 bg-gray-900 text-white"
-              onChange={handleLanguageChange}
-            >
-              {SUPPORTED_LANGUAGES.map((lang) => (
-                <option key={lang.identifier} value={lang.identifier}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
-          )}
-          <button
-            className="py-2 px-4 mx-4 my-2 bg-purple-800 text-white rounded-lg"
-            onClick={handleGptSearchClick}
-          >
-            {showGptSearch ? "Homepage" : "GPT Search"}
-          </button>
-          <img
-            className="hidden md:block w-12 h-12"
-            alt="usericon"
-            src={user?.photoURL}
-          />
+    <div>
 
-          
-          <button onClick={handleSignOut} className="font-bold text-white ">
-            (Sign Out)
-          </button>
-        </div>
-      )}
+        <img
+        src="https://www.google.com/imgres?q=moviemind%20logo&imgurl=https%3A%2F%2Fcf.geekdo-images.com%2F2bIfFMABH55zDt6VvA-nqQ__original%2Fimg%2FrvBpYIcgtrzseaNbp9V1w2Jw0jE%3D%2F0x0%2Ffilters%3Aformat(jpeg)%2Fpic6861141.jpg&imgrefurl=https%3A%2F%2Fboardgamegeek.com%2Fimage%2F6861141%2Fmovie-mind&docid=ccwQRRh20xqr5M&tbnid=NImBtYbodx9FyM&vet=12ahUKEwjuyNC25PSGAxWDslYBHRDvAm4QM3oECGgQAA..i&w=567&h=302&hcb=2&itg=1&ved=2ahUKEwjuyNC25PSGAxWDslYBHRDvAm4QM3oECGgQAA"
+        alt="logo"
+        />
     </div>
   );
 };
-export default Header;
+
+export default Header

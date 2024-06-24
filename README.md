@@ -1,4 +1,5 @@
 
+
 # moviemind
 Create React App
 Configured TailwindCSS
@@ -20,3 +21,4 @@ MovieLists * N
 # Movies Search
 Search Bar
 Movie Suggestions
+
