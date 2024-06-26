@@ -15,7 +15,7 @@ export const API_OPTIONS = {
 export const IMG_CDN_URL = "https://image.tmdb.org/t/p/w500";
 
 export const BG_URL =
-  "https://www.google.com/imgres?q=the%20boysbackground%20image&imgurl=https%3A%2F%2Fwallpapercave.com%2Fwp%2Fwp7543834.jpg&imgrefurl=https%3A%2F%2Fwallpapercave.com%2Fthe-boys-amazon-wallpapers&docid=B9Orltoqm3LsHM&tbnid=d0HYLUnMwbgmGM&vet=12ahUKEwjk7p_ro_eGAxUOsVYBHSvNC6wQM3oECC8QAA..i&w=1920&h=1080&hcb=2&ved=2ahUKEwjk7p_ro_eGAxUOsVYBHSvNC6wQM3oECC8QAA";
+  "https://assets.nflxext.com/ffe/siteui/vlv3/fc164b4b-f085-44ee-bb7f-ec7df8539eff/d23a1608-7d90-4da1-93d6-bae2fe60a69b/IN-en-20230814-popsignuptwoweeks-perspective_alpha_website_large.jpg";
 
 export const SUPPORTED_LANGUAGES = [
   { identifier: "en", name: "English" },

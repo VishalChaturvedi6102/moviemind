@@ -1,15 +1,59 @@
-import React from 'react'
+import React, { useEffect } from 'react';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
+import { auth } from "../utils/firebase";
 
 const Header = () => {
-  return (
-    <div>
+  const navigate = useNavigate();
 
-        <img
-        src="https://www.google.com/imgres?q=moviemind%20logo&imgurl=https%3A%2F%2Fcf.geekdo-images.com%2F2bIfFMABH55zDt6VvA-nqQ__original%2Fimg%2FrvBpYIcgtrzseaNbp9V1w2Jw0jE%3D%2F0x0%2Ffilters%3Aformat(jpeg)%2Fpic6861141.jpg&imgrefurl=https%3A%2F%2Fboardgamegeek.com%2Fimage%2F6861141%2Fmovie-mind&docid=ccwQRRh20xqr5M&tbnid=NImBtYbodx9FyM&vet=12ahUKEwjuyNC25PSGAxWDslYBHRDvAm4QM3oECGgQAA..i&w=567&h=302&hcb=2&itg=1&ved=2ahUKEwjuyNC25PSGAxWDslYBHRDvAm4QM3oECGgQAA"
-        alt="logo"
-        />
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        navigate("/error");
+      });
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/browse");
+      } else {
+        navigate("/");
+      }
+    });
+
+    // Unsubscribe when component unmounts
+    return () => unsubscribe();
+  }, [navigate]); // Included navigate in the dependency array
+
+  const handleLanguageChange = (e) => {
+    console.log(`Language changed to: ${e.target.value}`);
+  };
+
+  return (
+    <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
+      <img className="w-44 mx-auto md:mx-0" src={LOGO} alt="logo" />
+      <div className="flex p-2 justify-between">
+        <select
+          className="p-2 m-2 bg-gray-900 text-white"
+          onChange={handleLanguageChange}
+        >
+          {SUPPORTED_LANGUAGES.map((lang) => (
+            <option key={lang.identifier} value={lang.identifier}>
+              {lang.name}
+            </option>
+          ))}
+        </select>
+        <button onClick={handleSignOut} className="font-bold text-white">
+          Sign Out
+        </button>
+      </div>
     </div>
   );
 };
 
-export default Header
+export default Header;
