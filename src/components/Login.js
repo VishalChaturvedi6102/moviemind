@@ -32,7 +32,7 @@ const Login = () => {
     if (message) return;
 
     if (!isSignInForm) {
-      // Sign Up Logic
+      // Sign Up wala Logic
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
@@ -65,14 +65,14 @@ const Login = () => {
           setErrorMessage(errorCode + "-" + errorMessage);
         });
     } else {
-      // Sign In Logic
+      // Sign In wala Logic
       signInWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
-          // Signed in
+          // Signed in wala function
           const user = userCredential.user;
         })
         .catch((error) => {
@@ -129,8 +129,8 @@ const Login = () => {
         </button>
         <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
           {isSignInForm
-            ? "New to Netflix? Sign Up Now"
-            : "Already registered? Sign In Now."}
+            ? "Vai Moviemind main new hai kya? Vai Sign Up karle"
+            : "Vai tu already registered hai? Sign In karle Jaldi se."}
         </p>
       </form>
     </div>
