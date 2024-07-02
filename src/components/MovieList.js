@@ -1,3 +1,6 @@
+
+
+
 import MovieCard from "./MovieCard";
 
 const MovieList = ({ title, movies }) => {
