@@ -1,29 +1,22 @@
-import Header from "./Header";
-import useNowPlayingMovies from "../hooks/useNowPlayingMovies";
-import MainContainer from "./MainContainer";
-import SecondaryContainer from "./SecondaryContainer";
-import usePopularMovies from "../hooks/usePopularMovies";
-
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 const Browse = () => {
- 
-
-  useNowPlayingMovies();
-  usePopularMovies();
-
+  const user = useSelector((store) => store.user);
+  
   return (
     <div>
-      <Header />
-      
-          <MainContainer />
-          <SecondaryContainer />
-          { /* iske andar 
-          Videobackground + videotitle wali js fil included hai*/
-
-
-          }
-        
+      {user ? (
+        <div>
+          {/* Your browse content here */}
+        </div>
+      ) : (
+        <div>
+          {/* Prompt user to log in */}
+        </div>
+      )}
     </div>
   );
 };
+
 export default Browse;
