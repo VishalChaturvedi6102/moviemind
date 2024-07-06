@@ -1,22 +1,29 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import Header from "./Header";
+import useNowPlayingMovies from "../hooks/useNowPlayingMovies";
+import MainContainer from "./MainContainer";
+import SecondaryContainer from "./SecondaryContainer";
+import usePopularMovies from "../hooks/usePopularMovies";
+import GptSearch from "./GptSearch";
+import { useSelector } from "react-redux";
 
 const Browse = () => {
-  const user = useSelector((store) => store.user);
-  
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
+
+  useNowPlayingMovies();
+  usePopularMovies();
+
   return (
     <div>
-      {user ? (
-        <div>
-          {/* Your browse content here */}
-        </div>
+      <Header />
+      {showGptSearch ? (
+        <GptSearch />
       ) : (
-        <div>
-          {/* Prompt user to log in */}
-        </div>
+        <>
+          <MainContainer />
+          <SecondaryContainer />
+        </>
       )}
     </div>
   );
 };
-
 export default Browse;

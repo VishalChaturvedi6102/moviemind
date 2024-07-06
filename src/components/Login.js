@@ -1,44 +1,73 @@
-import React from 'react'
-
-
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
+import { validateData, validateName } from "../utils/validate";
 import Header from "./Header";
-import { checkValidData } from "../utils/validate";
+import { auth } from "../utils/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import { SIGN_UP_IMG, USER_AVATAR } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { BG_URL, USER_AVATAR } from "../utils/constants";
-
-
-import './Login.css'; // Import the CSS file
+//import { InfinitySpin } from "react-loader-spinner";
 
 const Login = () => {
-  const [isSignInForm, setIsSignInForm] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
-
+  const [isSignIn, setIsSignIn] = useState(true);
+  const [error, setError] = useState(null);
   const name = useRef(null);
-  const email = useRef(null);
-  const password = useRef(null);
+  const email = useRef('test@netflix.com');
+  const password = useRef('123456789');
+  const [loading, setLoading] = useState(false);
 
-  const handleButtonClick = () => {
-    const message = checkValidData(email.current.value, password.current.value);
-    setErrorMessage(message);
-    if (message) return;
+  const toggleSignIn = () => {
+    setIsSignIn(!isSignIn);
+  };
 
-    if (!isSignInForm) {
-      // Sign Up wala Logic
+  const handleValidation = () => {
+    setLoading(true);
+
+    if (isSignIn) {
+      const errorMessage = validateData(
+        email.current.value,
+        password.current.value
+      );
+      setError(errorMessage);
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          // GOTO BROWSE PAGE
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setError(errorCode + " - " + errorMessage);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      const nameError = name.current ? validateName(name.current.value) : null;
+      const emailError = validateData(
+        email.current.value,
+        password.current.value
+      );
+      setError(nameError || emailError);
+
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
+          // Signed in
           const user = userCredential.user;
           updateProfile(user, {
             displayName: name.current.value,
@@ -56,84 +85,111 @@ const Login = () => {
               );
             })
             .catch((error) => {
-              setErrorMessage(error.message);
+              setError(error.message);
+              console.log(error);
+            })
+            .finally(() => {
+              setLoading(false);
             });
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
-        });
-    } else {
-      // Sign In wala Logic
-      signInWithEmailAndPassword(
-        auth,
-        email.current.value,
-        password.current.value
-      )
-        .then((userCredential) => {
-          // Signed in wala function
-          const user = userCredential.user;
+          setError(errorCode + " - " + errorMessage);
         })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+        .finally(() => {
+          setLoading(false);
         });
     }
   };
 
-  const toggleSignInForm = () => {
-    setIsSignInForm(!isSignInForm);
-  };
   return (
-    <div>
-      <Header />
+    <>
       <div className="absolute">
-        <img className="h-screen object-cover" src={BG_URL} alt="logo" />
+        <Header />
       </div>
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className="w-full md:w-3/12 absolute p-12 bg-black my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80"
-      >
-        <h1 className="font-bold text-3xl py-4">
-          {isSignInForm ? "Sign In" : "Sign Up"}
-        </h1>
-
-        {!isSignInForm && (
-          <input
-            ref={name}
-            type="text"
-            placeholder="Full Name"
-            className="p-4 my-4 w-full bg-gray-700"
+      <div className="md:flex absolute z-50 md:mt-24">
+        <div className="w-[35%] hidden md:block">
+          <img
+            fetchpriority="high"
+            src={SIGN_UP_IMG}
+            className="max-w-sm my-9 ml-44 h-auto"
+            alt="header-image"
           />
-        )}
-        <input
-          ref={email}
-          type="text"
-          placeholder="Email Address"
-          className="p-4 my-4 w-full bg-gray-700"
-        />
-        <input
-          ref={password}
-          type="password"
-          placeholder="Password"
-          className="p-4 my-4 w-full bg-gray-700"
-        />
-        <p className="text-red-500 font-bold text-lg py-2">{errorMessage}</p>
-        <button
-          className="p-4 my-6 bg-red-700 w-full rounded-lg"
-          onClick={handleButtonClick}
-        >
-          {isSignInForm ? "Sign In" : "Sign Up"}
-        </button>
-        <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
-          {isSignInForm
-            ? "New in Moviemind ?  Sign Up "
-            : " already registered ? Sign In."}
-        </p>
-      </form>
-    </div>
+        </div>
+        <div className="md:w-1/2 md:h-full md:px-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+            className="mx-auto md:mx-4 md:rounded-xl text-white bg-black md:opacity-90 p-12 w-100 md:h-[85%] md:w-[40%]"
+          >
+            <div className="container flex items-center justify-center h-screen md:h-[95%]">
+              <div className="flex flex-col items-start w-full md:w-screen">
+                <p className="text-white font-semibold text-3xl mb-6">
+                  {isSignIn ? "Sign In" : "Sign Up"}
+                </p>
+                {!isSignIn && (
+                  <input
+                    ref={name}
+                    type="text"
+                    className="px-4 py-3 mb-4 w-full bg-neutral-800 focus:bg-neutral-800 rounded-md"
+                    placeholder="Name"
+                  />
+                )}
+                <input
+                  ref={email}
+                  defaultValue={"test@netflix.com"}
+                  type="text"
+                  className="px-4 py-3 mb-4 w-full bg-neutral-800 focus:bg-neutral-800 rounded-md"
+                  placeholder="test@netflix.com"
+                />
+                <input
+                  ref={password}
+                  type="password"
+                  defaultValue={"123456789"}
+                  className="px-4 py-3 w-full bg-neutral-800 focus:bg-neutral-800 rounded-md"
+                  placeholder="123456789"
+                />
+
+                <p className="text-red-500 font-semibold mt-2 text-lg">{error}</p>
+
+                <button
+                  onClick={loading ? null : handleValidation}
+                  className={`px-4 py-2 mt-8 rounded-md mb-2 bg-brand-red text-white font-semibold w-full ${
+                    loading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <p>Loading...</p>
+                  ) : isSignIn ? (
+                    "Sign In"
+                  ) : (
+                    "Sign up"
+                  )}
+                </button>
+
+                <p
+                  className="text-neutral-400 md:mt-7 cursor-pointer"
+                  onClick={toggleSignIn}
+                >
+                  {isSignIn
+                    ? "New to Netflix? Sign Up now"
+                    : "Already registered"}
+                </p>
+
+                <p className="text-neutral-400 text-xs">
+                  This page is protected by Google reCAPTCHA to ensure you're
+                  not a bot.
+                </p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
   );
-}; 
+};
+
 export default Login;
