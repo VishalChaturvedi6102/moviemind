@@ -8,7 +8,11 @@ export const API_OPTIONS = {
   method: 'GET',
   headers: {
     accept: 'application/json',
+<<<<<<< HEAD
     Authorization: 'Bearer .env'
+=======
+    Authorization: 'Bearer'
+>>>>>>> ddfc61d7b60db291518fb306e09d3bf9652042d9
   }
 };
 
