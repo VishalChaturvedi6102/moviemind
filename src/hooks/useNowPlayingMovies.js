@@ -21,6 +21,7 @@ const useNowPlayingMovies = () => {
   };
 
   useEffect(() => {
+    
     !nowPlayingMovies && getNowPlayingMovies();
   }, []);
 };
